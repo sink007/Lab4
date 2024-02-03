@@ -1,11 +1,11 @@
-# Internet of Things (IoT) Template - Random Number Generator and Analysis
+# Internet of Things (IoT) Template - Home Automation and Analysis
 
 ### Description
-The hardware must generate a random integer upon pressing a button, display it on a seven-segment unit, and then publish it to a topic subscribed to, by both the backend and frontend sections of the system. It is also required to process and execute actions for any messages published to a topic to which it is subscribed.
+The Hardware component has two tasks: (1) Implement a remote authentication sub-system as part of a Home Automation System, for the main entrance of a Smart Home. This enables home owners to grant temporary access to their home, by providing their guest with a 4 digit passcode. Subsequently, the pin can be change remotely, after the guest leaves. (2) A real-time water management sub-system for the Home Automation System, to monitor the water levels of a 1000 US Gal storage tank located on the compound.
 
-The backend is tasked with storing data, published by the hardware, in the database following the schema specified in the hardware specifications. Additionally, it is responsible for making the stored data in the database accessible to the frontend through API routes.
+The Backend component also has two tasks: (1) Store data sent via HTTP POST request from the Arduino Nano in a database. This database should adhere to a specified schema. (2) Facilitate the access of stored data by the hardware and frontend. This should be accomplished through the implementation of API routes on the frontend and HTTP GET request from the hardware (ESP32) component.
 
-The role of the frontend is to showcase the latest randomly generated integer published by the hardware on a webpage. Additionally, it must offer an interface, in the form of buttons, to toggle the state of two LEDs controlled by the hardware. Furthermore, the webpage should incorporate a chart or graph to illustrate the frequency distribution of each randomly generated integer stored in the database. Finally, it should include an interface, presented as cards, to retrieve and display a count of the number of times each LED was turned on.
+The Frontend component is tasked with: (1) Provide a User Interface (UI), on a webpage, for setting a 4 digit passcode used by the Remote authentication system’s hardware component to control access at the main entrance. (2) Provide a user interface (UI), on a webpage, featuring charts and graphs to display real-time status of the Water Management System. (3) Another webpage, which should integrate a visual representation, such as a chart or graph, extracting trends and illustrating any correlation among variables, from data stored in the database.  
 
 
 # Hardware Setup
@@ -14,14 +14,15 @@ Download and install [Arduino](https://www.arduino.cc/en/software) IDE. Subseque
 2. Adafruit ILI9341 by Adafruit
 3. ArduinoJson by Benoît Blanchon
 4. PubSubClient by Nick O’Leary
-5. [Install](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html) the ESP32 Arduino library. Install the Stable release.
+5. NewPing by Tim Eckel
+6. esp32 by Espressif Systems, from the Board Manager tab in the Arduino IDE
 
 
 
 # Backend Setup
 Always ensure to establish a virtual environment and install the necessary packages from your requirements file if you haven't already done so. Following that, activate your virtual environment and proceed to run your Flask API.
 
-**The commands below must be executed from a command line terminal in the RNG/backend/ folder**
+**The commands below must be executed from a command line terminal in the homeautomation/backend/ folder**
 ### Create a virtual environment
 
 Windows 
@@ -69,7 +70,7 @@ Customize configuration
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 
-### In a command line terminal, execute the first commands in the RNG/frontend/ folder to initiate the dev server for the initial setup. 
+### In a command line terminal, execute the first commands in the homeautomation/frontend/ folder to initiate the dev server for the initial setup. 
 ### For all subsequent instances, only run the second command to start the dev server.
 ### Once development is complete, run the final command to generate production files. Please be aware that the generation of production files is not part of this course.
 
