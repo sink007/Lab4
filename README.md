@@ -48,7 +48,7 @@ pip install -r requirements.txt
 ```
 ### Create **.env** file
 Create a **.env** file in the backend/ folder to store the application's environment variables. 
-Refer to the lab manual for the specific information that must be added to this file.
+Refer to the lab manual for the specific information that must be added to this file. Subsequently, modify the **FLASK_RUN_HOST** variable found in this file from localhost to the IP address of the computer your backend is running on.
 
 ### Start Flask API
 Windows
@@ -87,4 +87,17 @@ npm run dev
 Create a production bundle (Compile and Minify for Production)
 ```sh
 npm run build
+```
+
+
+### Modify **vite.config.js** file
+Modify the target in the proxy object found in the **frontend/vite.config.js** file shown in the code block below. Change localhost in the string to the IP address of the computer your backend is running on.
+```js
+proxy: {
+      '^/api*': { 
+        target: 'http://localhost:8080/' ,
+       changeOrigin: false,
+    },   
+  }
+
 ```
