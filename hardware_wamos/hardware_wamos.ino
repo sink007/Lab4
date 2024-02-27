@@ -3,17 +3,21 @@
 // IMPORT ALL REQUIRED LIBRARIES
 
 #include <math.h>
-   
+
+#ifndef ARDUINOJSON_H
+#include <ArduinoJson.h>
+#endif
+
 //**********ENTER IP ADDRESS OF SERVER******************//
 
-#define HOST_IP     "localhost"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     "192.168.5.131"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
-#define idNumber    "620012345"       // REPLACE WITH YOUR ID NUMBER 
+#define idNumber    "620155784"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "YOUR WIFI"      // "REPLACE WITH YOUR WIFI's SSID"   
-#define password    "YOUR PASSWORD"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
+#define SSID        "Hey"      // "REPLACE WITH YOUR WIFI's SSID"   
+#define password    "carlencea"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
 
 #define stay        100
  
@@ -27,30 +31,70 @@
  
  
 /* Declare your functions below */
- 
- 
-
-SoftwareSerial esp(espRX, espTX); 
- 
-
-void setup(){
-
-  Serial.begin(115200); 
-  // Configure GPIO pins here
+float calculateWaterHeight(float distance);
+float calculateRemainingReserves(float waterHeight);
+float calculatePercentage(float waterHeight);
 
  
 
-  espInit();  
- 
+#define MAX_WATER_LEVEL 77.763
+#define SENSOR_HEIGHT 94.5
+#define TANK_DIAMETER 61.5
+
+int trigPin = 6;    // Trigger
+int echoPin = 7;    // Echo
+float duration, inches;
+
+SoftwareSerial esp(espRX, espTX);
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  espInit();
 }
 
 void loop(){ 
-   
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+ 
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+ 
+  // Convert the time into a distance
+  inches = (duration/2) / 74;   // Divide by 74 or multiply by 0.0135
+
+  
+ 
   // send updates with schema ‘{"id": "student_id", "type": "ultrasonic", "radar": 0, "waterheight": 0, "reserve": 0, "percentage": 0}’
-
-
-
+  float waterHeight = MAX_WATER_LEVEL - inches + 16.737  ;
+  float remainingReserves = calculateRemainingReserves(waterHeight);
+  float percentage = calculatePercentage(waterHeight);
+ /* StaticJsonDocument<1000> doc;
+  char message[800]  = {0};
+  // Add data to JSON object
+  doc["id"] = idNumber;
+  doc["type"] = "ultrasonic";
+  doc["radar"] = inches;
+  doc["waterheight"] = waterHeight;
+  doc["reserve"] = remainingReserves;
+  doc["percentage"] = percentage;
+  
+  // Convert JSON object to string
+  serializeJson(doc, message);*/
+  String schema = "{\"id\": \"" + String(idNumber) + "\", \"type\": \"ultrasonic\", \"radar\": "+ String(inches) + ", \"waterheight\": "+ String(waterHeight) + ", \"reserve\": "+ String(remainingReserves) + ", \"percentage\": "+ String(percentage) + "}";
+  char message[schema.length() + 1]; 
+  schema.toCharArray(message, schema.length() + 1);
+   //esp.println(json);
+  espUpdate(message);
   delay(1000);  
+  
 }
 
  
@@ -106,4 +150,15 @@ void espInit(){
 
 //***** Design and implement all util functions below ******
  
+
+float calculateRemainingReserves(float waterHeight) {
+  float radius = TANK_DIAMETER / 2;
+  float volume = PI * pow(radius, 2) * waterHeight;
+  return volume / 231; // Convert cubic inches to US Gallons
+}
+
+float calculatePercentage(float waterHeight) {
+  return (waterHeight / MAX_WATER_LEVEL * 100);
+}
+
 
