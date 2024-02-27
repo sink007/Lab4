@@ -10,14 +10,14 @@
 
 //**********ENTER IP ADDRESS OF SERVER******************//
 
-#define HOST_IP     "192.168.5.131"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     "172.16.193.55"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
 #define idNumber    "620155784"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "Hey"      // "REPLACE WITH YOUR WIFI's SSID"   
-#define password    "carlencea"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
+#define SSID        "MonaConnect"      // "REPLACE WITH YOUR WIFI's SSID"   
+#define password    ""  // "REPLACE WITH YOUR WiFi's PASSWORD" 
 
 #define stay        100
  
@@ -154,7 +154,12 @@ void espInit(){
 float calculateRemainingReserves(float waterHeight) {
   float radius = TANK_DIAMETER / 2;
   float volume = PI * pow(radius, 2) * waterHeight;
-  return volume / 231; // Convert cubic inches to US Gallons
+  if (volume/231< 0){
+    return 0;
+  }
+  else{
+     return volume / 231; // Convert cubic inches to US Gallons
+  }
 }
 
 float calculatePercentage(float waterHeight) {
