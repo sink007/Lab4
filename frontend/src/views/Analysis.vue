@@ -182,6 +182,7 @@ onMounted(() => {
   setTimeout(() => {
     Mqtt.subscribe("620155784");
     Mqtt.subscribe("620155784_sub");
+    Mqtt.subscribe("620155784_pub");
   }, 3000);
 });
 

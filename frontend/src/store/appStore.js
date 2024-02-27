@@ -113,7 +113,7 @@ export const useAppStore =  defineStore('app', ()=>{
                     }
                     if (data["status"] == "failed"
                     ) {
-                        console.log("getIimestamp returned no data");
+                        console.log("getTimestamp returned no data");
                     }
                 }
             }
