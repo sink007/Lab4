@@ -16,7 +16,7 @@ class MQTT:
     ID = f"IOT_B_{randint(1,1000000)}"
 
     #  DEFINE ALL TOPICS TO SUBSCRIBE TO
-    sub_topics = [("620012345_pub", 0), ("620012345", 0), ("620012345_sub", 0)] #  A list of tuples of (topic, qos). Both topic and qos must be present in the tuple.
+    sub_topics = [("620155784_pub", 0), ("620155784", 0), ("620155784_sub", 0)] #  A list of tuples of (topic, qos). Both topic and qos must be present in the tuple.
 
 
     def __init__(self,mongo):
@@ -34,8 +34,10 @@ class MQTT:
 
 
         # REGISTER CALLBACK FUNCTION FOR EACH TOPIC
-        self.client.message_callback_add("620012345", self.update)
-        self.client.message_callback_add("620012345_pub", self.toggle)
+        self.client.message_callback_add("620155784", self.update)
+        self.client.message_callback_add("620155784_pub", self.update)
+        self.client.message_callback_add("620155784_sub", self.update)
+
 
         # ADD MQTT SERVER AND PORT INFORMATION BELOW
         self.client.connect_async("www.yanacreations.com", 1883, 60)
@@ -83,27 +85,16 @@ class MQTT:
     # DEFINE CALLBACK FUNCTIONS FOR EACH TOPIC
     def update(self, client, userdata, msg):
         try:
-            topic   = msg.topic
+            topic = msg.topic
             payload = msg.payload.decode("utf-8")
-            # print(payload) # UNCOMMENT WHEN DEBUGGING  
-            
-            update  = loads(payload) # CONVERT FROM JSON STRING TO JSON OBJECT  
-            print(update) 
+            print(payload)  # UNCOMMENT WHEN DEBUGGING
+
+            radar = loads(payload)  # CONVERT FROM JSON STRING TO JSON OBJECT
+            self.mongo.insertRadar(radar)  # INSERT INTO DATABASE
 
         except Exception as e:
-            print(f"MQTT: GDP Error: {str(e)}")
+            print(f"MQTT: Error: {str(e)}")
 
-    def toggle(self,client, userdata, msg):    
-        '''Process messages from Frontend'''
-        try:
-            topic   = msg.topic
-            payload = msg.payload.decode("utf-8")
-            # print(payload) # UNCOMMENT WHEN DEBUGGING
-            update  = loads(payload) # CONVERT FROM JSON STRING TO JSON OBJECT              
-            print(update)
-
-        except Exception as e:
-            print(f"MQTT: toggle Error - {str(e)}")
 
 
 
